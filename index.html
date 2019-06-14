@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Spyfall</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <h1 class="title">Sehr funktionelles Spyfall</h1><br>
+    <span>Spieleranzahl:</span>
+    <input id="anzahl" type="number" , value=4, min=3><br>
+    <button onclick="start()" id="button">START</button>
+    <span id="status"></span>
+    <p class="howto">
+        <h3>HowTo</h3>
+        Hallöle wie ihr seht ist die Seite noch work-in-progress :>
+        Jeder Spieler bekommt eine Rolle an einem Ort zugewiesen. Der einzige, der keinen Ort bekommt ist der Spion.
+        Ziel des Spiels ist es durch kluge Fragen den Spion zu enttarnen, bzw. als Spion den Ort herauszufinden. Alle
+        Spieler befinden sich am selben Ort, haben nur unterschiedliche Rollen. Bei Bugs, Ortswünschen oder sowas in der
+        Richtung schreibt ne PN über <a href="t.me/LoggeL">Telegram</a>.
+    </p>
+
+    <!-- IGITT INLINE JAVASCRIPT -->
+    <script>
+        var blacklist = [] // Vermeide Dupes
+
+        var daten = [
+            { ort: "Bäckerei", rollen: ["Bäcker", "Lehrling", "Verkäufer", "Lieferant"] },
+            { ort: "Werkstatt", rollen: ["Mechaniker", "Autofahrer", "Besitzer", "Inspektor"] },
+            { ort: "Zug", rollen: ["Kontrolleur", "Lokführer", "Fahrgast", "Schaffner", "Pendler"] },
+            { ort: "Raumschiff", rollen: ["Astronaut", "Pilot", "Alien", "Wissenschaftler"] },
+            { ort: "Bus", rollen: ["Fahrer", "Mechaniker", "Schüler", "Kontrolleur", "Pendler"] },
+            { ort: "U-Boot", rollen: ["Maschinist", "Kapitän", "Offizier", "Flugzeugpilot"] },
+            { ort: "Farm", rollen: ["Bauer", "Schäfer", "Traktorfahrer", "Aushilfskraft"] },
+            { ort: "Antarktis-Forschungsstation", rollen: ["Forscher", "Fischer", "Wilderer"] },
+            { ort: "Burg", rollen: ["Ritter", "Bogenschütze", "König"] },
+            { ort: "Bundestag", rollen: ["Reinigunsfachkraft", "Kanlzer", "Minister"] },
+            { ort: "Fahrschule", rollen: ["Prüfer", "Schüler", "Lehrer"] },
+            { ort: "Zoo", rollen: ["Wärter", "Besucher", "Direktor"] },
+            { ort: "Kino", rollen: ["Besucher", "Techniker", "Besitzer"] },
+            { ort: "Krankenhaus", rollen: ["Chirurg", "Patient", "Sanitäter"] },
+            { ort: "Fabrik", rollen: ["Arbeiter", "Besitzer", "Mechaniker"] },
+            { ort: "Polizei", rollen: ["Verbrecher", "Polizist", "Zivilist"] },
+            { ort: "Gefängnis", rollen: ["Wärter", "Sträfling", "Koch"] },
+            { ort: "Heißluftballon", rollen: ["Pilot", "Fahrgast", "Fotograf"] },
+            { ort: "Gastwirtschaft", rollen: ["Koch", "Kellner", "Gast"] },
+            { ort: "Gemeindeamt", rollen: ["Bürgermeister", "Abgeordneter", "Besorgter Bürger"] },
+            { ort: "Fußballvereinshaus", rollen: ["Trainer", "Vorsitzender", "Stürmer", "Torwart"] },
+            { ort: "Tankstelle", rollen: ["Tankwart", "Autofahrer", "Kassierer", "Räuber"] },
+            { ort: "Pfarramt", rollen: ["Pfarrer", "Diakon", "Küster"] },
+            { ort: "Büro", rollen: ["Chef", "Azubi", "Abteilungsleiter", "Putzfrau"] },
+            { ort: "Autofähre", rollen: ["Kapitän", "Autofahrer", "Kassierer", "Matrose", "Maschinist"] },
+            { ort: "Passagierflugzeug", rollen: ["Pilot", "Terrorist", "Stewardess", "Passagier", "Mechaniker"] },
+            { ort: "Flugzeugträger", rollen: ["Pilot", "Soldat", "Kapitän", "Matrose", "Funker", "Waffenoffizier"] },
+            { ort: "Kasino", rollen: ["Groupier", "Spieler", "WACHMANN", "Lockvogel"] },
+            { ort: "Schule", rollen: ["Lehrer", "Schüler", "Praktikant", "Direktor", "Schläger", "Streber"] },
+            { ort: "Disko", rollen: ["DJ", "Barkeeper", "Stripper", "Wachmann", "Sanitäter", "Tänzer"] },
+            { ort: "Museum", rollen: ["Nachtwächter", "Besucher", "Historiker", "Direktor", "Kassierer", "Kurator"] },
+        ]
+
+        var status = document.getElementById('status')
+        function start() {
+            var spielerzahl = document.getElementById('anzahl').value
+
+            // rip old browsers
+            var validDaten = daten.filter(d => d.rollen.length + 1 >= spielerzahl && !blacklist.includes(d.ort))
+
+            if (validDaten.length == 0) {
+                return alert("Nicht genug Rollen für die Spieleranzahl! Deaktiviere Blacklist oder aktiviere Mehrfachnennung!")
+            }
+
+            var spy = Math.floor(Math.random() * spielerzahl)
+            var auswahl = validDaten[Math.floor(Math.random() * validDaten.length)]
+
+            blacklist.push(auswahl.ort)
+
+            for (i = 0; i < spielerzahl; i++) {
+                alert("Spieler " + (i + 1) + " bitte bestätigen")
+                if (i == spy) {
+                    alert("Spieler " + (i + 1) + "\nRolle: Spion\nOrt: ???")
+                } else {
+                    // immer diese oneliner
+                    alert("Spieler " + (i + 1) + "\nRolle: " + auswahl.rollen.splice(Math.floor(auswahl.rollen.length * Math.random()), 1)[0] + '\nOrt: ' + auswahl.ort)
+                }
+
+            }
+        }
+    </script>
+</body>
+
+</html>
