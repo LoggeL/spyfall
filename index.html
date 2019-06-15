@@ -7,24 +7,117 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Spyfall</title>
     <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
 
+        .content-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-content: center;
+            justify-content: center;
+        }
+
+        .content {
+            align-self: center;
+        }
+
+        .button {
+            width: 100px;
+            height: 100px;
+            border-radius: 100%;
+            font-size: 20px;
+            border: 0;
+            cursor: pointer;
+            animation: pulsieren 2s infinite;
+        }
+
+        @keyframes pulsieren {
+            0% {
+                box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.1);
+            }
+
+            100% {
+                box-shadow: 0 0 0 20px rgba(0, 0, 0, 0);
+            }
+        }
+
+        .danger {
+            background-image: radial-gradient(white, red);
+        }
+
+        .neutral {
+            background-image: radial-gradient(white, blue);
+        }
+
+        .content-wrapper div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+            display: none;
+        }
+
+        .content-wrapper div.active {
+            display: flex;
+        }
+
+        .content-wrapper div.fade {
+            opacity: 1;
+        }
+
+        p {
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+        input {
+            border: 0;
+            border-bottom: 5px;
+            margin: 5px 5px 25px 5px;
+            box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.2);
+            width: 150px;
+
+        }
     </style>
 </head>
 
 <body>
-    <h1 class="title">Sehr funktionelles Spyfall</h1><br>
-    <span>Spieleranzahl:</span>
-    <input id="anzahl" type="number" , value=4, min=3><br>
-    <button onclick="start()" id="button">START</button>
-    <span id="status"></span>
-    <p class="howto">
-        <h3>HowTo</h3>
-        Hallöle wie ihr seht ist die Seite noch work-in-progress :>
-        Jeder Spieler bekommt eine Rolle an einem Ort zugewiesen. Der einzige, der keinen Ort bekommt ist der Spion.
-        Ziel des Spiels ist es durch kluge Fragen den Spion zu enttarnen, bzw. als Spion den Ort herauszufinden. Alle
-        Spieler befinden sich am selben Ort, haben nur unterschiedliche Rollen. Bei Bugs, Ortswünschen oder sowas in der
-        Richtung schreibt ne PN über <a href="t.me/LoggeL">Telegram</a>.
-    </p>
+    <div class="content-wrapper">
+        <div class="content active fade">
+            <div id="home" class="active fade">
+                <h1 class="title">Spyfall</h1>
+                <label for="anzahl">Anzahl der Spieler</label>
+                <input id="anzahl" min=3 type="number" value=4 placeholder="Anzahl der Spieler">
+                <button class="button danger" onclick="start()">Start</button>
+            </div>
+
+            <div id="warteSpieler">
+                <p>Spieler <span id="warteSpielernummer">0</span> bitte bestätigen</p>
+                <button class="button neutral" onclick="zeigen()">Ok</button>
+            </div>
+
+            <div id="zeigeSpieler">
+                <p>Spieler <span id="zeigeSpielernummer">0</span><br />
+                    Rolle: <span id="zeigeRolle"></span><br />
+                    Ort: <span id="zeigeOrt"></span></p>
+                <button class="button neutral" onclick="weiter()">Nächster</button>
+            </div>
+
+            <div id="zeigeSpy">
+                <p>Hallo Spieler <span id="spySpielernummer"></span>.<br />
+                    Du bist der Spion!</p>
+                <button class="button danger" onclick="weiter()">Nächster</button>
+            </div>
+        </div>
+    </div>
 
     <!-- IGITT INLINE JAVASCRIPT -->
     <script>
@@ -58,15 +151,25 @@
             { ort: "Autofähre", rollen: ["Kapitän", "Autofahrer", "Kassierer", "Matrose", "Maschinist"] },
             { ort: "Passagierflugzeug", rollen: ["Pilot", "Terrorist", "Stewardess", "Passagier", "Mechaniker"] },
             { ort: "Flugzeugträger", rollen: ["Pilot", "Soldat", "Kapitän", "Matrose", "Funker", "Waffenoffizier"] },
-            { ort: "Kasino", rollen: ["Groupier", "Spieler", "WACHMANN", "Lockvogel"] },
+            { ort: "Kasino", rollen: ["Groupier", "Spieler", "Wachmann", "Lockvogel"] },
             { ort: "Schule", rollen: ["Lehrer", "Schüler", "Praktikant", "Direktor", "Schläger", "Streber"] },
             { ort: "Disko", rollen: ["DJ", "Barkeeper", "Stripper", "Wachmann", "Sanitäter", "Tänzer"] },
             { ort: "Museum", rollen: ["Nachtwächter", "Besucher", "Historiker", "Direktor", "Kassierer", "Kurator"] },
         ]
 
         var status = document.getElementById('status')
+        var home = document.getElementById('home')
+        var warteSpieler = document.getElementById('warteSpieler')
+        var zeigeSpieler = document.getElementById('zeigeSpieler')
+        var zeigeSpy = document.getElementById('zeigeSpy')
+
+        var spySpielernummer = document.getElementById('spySpielernummer')
+        var zeigeSpielernummer = document.getElementById('zeigeSpielernummer')
+
+        var spieler, auswahl, spy, spielerzahl
+
         function start() {
-            var spielerzahl = document.getElementById('anzahl').value
+            spielerzahl = document.getElementById('anzahl').value
 
             // rip old browsers
             var validDaten = daten.filter(d => d.rollen.length + 1 >= spielerzahl && !blacklist.includes(d.ort))
@@ -75,20 +178,75 @@
                 return alert("Nicht genug Rollen für die Spieleranzahl! Deaktiviere Blacklist oder aktiviere Mehrfachnennung!")
             }
 
-            var spy = Math.floor(Math.random() * spielerzahl)
-            var auswahl = validDaten[Math.floor(Math.random() * validDaten.length)]
+            spy = Math.floor(Math.random() * spielerzahl)
+            auswahl = validDaten[Math.floor(Math.random() * validDaten.length)]
 
             blacklist.push(auswahl.ort)
+            auswahl.rollen = shuffle(auswahl.rollen)
+            spieler = 0
+            home.className = ''
+            warten()
+        }
 
-            for (i = 0; i < spielerzahl; i++) {
-                alert("Spieler " + (i + 1) + " bitte bestätigen")
-                if (i == spy) {
-                    alert("Spieler " + (i + 1) + "\nRolle: Spion\nOrt: ???")
-                } else {
-                    // immer diese oneliner
-                    alert("Spieler " + (i + 1) + "\nRolle: " + auswahl.rollen.splice(Math.floor(auswahl.rollen.length * Math.random()), 1)[0] + '\nOrt: ' + auswahl.ort)
-                }
+        function shuffle(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex;
 
+            while (0 !== currentIndex) {
+
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+
+            return array;
+        }
+
+        function warten() {
+            zeigeSpieler.className = ''
+            zeigeSpy.className = ''
+            warteSpielernummer.innerText = spieler + 1
+            warteSpieler.className = 'active'
+            setTimeout(function () {
+                warteSpieler.className = 'active fade'
+            })
+        }
+
+        function zeigen() {
+            warteSpieler.className = ''
+            if (spieler == spy) {
+                spySpielernummer.innerText = spieler + 1
+                zeigeSpy.className = 'active'
+                setTimeout(function () {
+                    zeigeSpy.className = 'active fade'
+                })
+            }
+            else {
+                zeigeSpielernummer.innerText = spieler + 1
+                zeigeSpieler.className = 'active'
+                setTimeout(function () {
+                    zeigeSpieler.className = 'active fade'
+                })
+                zeigeOrt.innerText = auswahl.ort
+                zeigeRolle.innerText = auswahl.rollen.shift()
+            }
+            spieler += 1
+        }
+
+        function weiter() {
+            if (spieler == spielerzahl) {
+                zeigeSpieler.className = ''
+                zeigeSpy.className = ''
+                home.className = 'active'
+                setTimeout(function () {
+                    home.className = 'active fade'
+                })
+                spieler = 0
+            }
+            else {
+                warten()
             }
         }
     </script>
