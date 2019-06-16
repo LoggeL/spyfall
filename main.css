@@ -1,0 +1,212 @@
+
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.content-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+.content {
+    align-self: center;
+}
+
+.button {
+    width: 100px;
+    height: 100px;
+    border-radius: 100%;
+    font-size: 20px;
+    border: 0;
+    cursor: pointer;
+    animation: pulsieren 2s infinite;
+}
+
+.nocolor .button {
+    background-image: none !important;
+}
+
+@keyframes pulsieren {
+    0% {
+        box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.1);
+    }
+
+    100% {
+        box-shadow: 0 0 0 20px rgba(0, 0, 0, 0);
+    }
+}
+
+.danger {
+    background-image: radial-gradient(white, red);
+}
+
+.neutral {
+    background-image: radial-gradient(white, blue);
+}
+
+.content-wrapper div.content div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.5s ease-in;
+    display: none;
+}
+
+.content-wrapper div.content div.active {
+    display: flex;
+}
+
+.content-wrapper div.content div.active {
+    opacity: 1;
+}
+
+p {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+input {
+    border: 0;
+    border-bottom: 5px;
+    margin: 5px 5px 25px 5px;
+    box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    width: 150px;
+}
+
+div.content div .anzahl-wrapper {
+    display: flex;
+    opacity: 1;
+    flex-direction: row;
+    align-items: center;
+}
+
+.settings-fab {
+    position: fixed;
+    bottom: 5%;
+    left: 5%;
+    z-index: 9;
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    background-color: rgb(200, 200, 200);
+    cursor: pointer;
+}
+
+.settings-fab svg {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+}
+
+#settings {
+    width: 300px;
+    position: fixed;
+    right: -302px;
+    height: 100%;
+    justify-content: center;
+    box-shadow: -2px 0px 2px 1px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    transition: right 1s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#settings div.slider-wrapper {
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 5px;
+}
+
+#settings label.label {
+    font-size: 20px;
+    width: 150px;   
+}
+
+#settings.active {
+    right: 0;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+
+  span.input-button {
+    font-size: 15px;
+    border-radius: 100%;
+    margin: 5px 5px 25px 5px;
+    text-align: center;
+    box-shadow: 2px 2px 2px 1px rgba(0,0,0,.2);
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+  }
