@@ -1,12 +1,14 @@
-navigator.serviceWorker.register('service-worker.js', {
-    scope: './'
-});
+if (serviceWorker in navigator) {
+    navigator.serviceWorker.register('service-worker.js', {
+        scope: './'
+    });
 
-navigator.serviceWorker.ready.then(
-    function () {
-        console.log("Service worker is ready!")
-    }
-);
+    navigator.serviceWorker.ready.then(
+        function () {
+            console.log("Service worker is ready!")
+        }
+    );
+}
 
 let deferredPrompt;
 const addBtn = document.getElementById('add-button');
