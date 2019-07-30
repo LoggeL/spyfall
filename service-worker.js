@@ -1,41 +1,20 @@
-var CACHE = 'cache-and-update';
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js');
 
-self.addEventListener('install', function (evt) {
-    console.log('The service worker is being installed.');
-
-    evt.waitUntil(precache());
-});
-
-self.addEventListener('fetch', function (evt) {
-    console.log('The service worker is serving the asset.');
-
-    evt.respondWith(fromCache(evt.request));
-
-    evt.waitUntil(update(evt.request));
-});
-
-function precache() {
-    return caches.open(CACHE).then(function (cache) {
-        return cache.addAll([
-            './index.html',
-            './main.css',
-            './main.js'
-        ]);
-    });
+if (workbox) {
+    console.log(`Yay! Workbox is loaded 🎉`);
+} else {
+    console.log(`Boo! Workbox didn't load 😬`);
 }
 
-function fromCache(request) {
-    return caches.open(CACHE).then(function (cache) {
-        return cache.match(request).then(function (matching) {
-            return matching || Promise.reject('no-match');
-        });
-    });
-}
+//workbox.setConfig({ debug: true })
 
-function update(request) {
-    return caches.open(CACHE).then(function (cache) {
-        return fetch(request).then(function (response) {
-            return cache.put(request, response);
-        });
-    });
-}
+workbox.routing.registerRoute(
+    // Cache Everything.
+    () => true,
+    new workbox.strategies.StaleWhileRevalidate({
+        //        plugins: [
+        //            new workbox.broadcastUpdate.Plugin('precache-channel')
+        //        ]
+    })
+
+);

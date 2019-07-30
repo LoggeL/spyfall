@@ -8,13 +8,26 @@ if ('serviceWorker' in navigator) {
             console.log("Service worker is ready!")
         }
     );
+
 }
+
+/*
+const updateChannel = new BroadcastChannel('precache-channel');
+updateChannel.addEventListener('message', event => {
+    console.log(event)
+    if (confirm(`New content is available!. Click OK to refresh`)) {
+        window.location.reload();
+    }
+});
+*/
 
 let deferredPrompt;
 const addBtn = document.getElementById('add-button');
 addBtn.style.display = 'none';
 
 window.addEventListener('beforeinstallprompt', (e) => {
+
+    console.log("beforeInstallPrompt")
 
     e.preventDefault();
     deferredPrompt = e;
@@ -69,6 +82,8 @@ var daten = [
     { ort: "Disko", rollen: ["DJ", "Barkeeper", "Stripper", "Wachmann", "Sanitäter", "Tänzer"] },
     { ort: "Museum", rollen: ["Nachtwächter", "Besucher", "Historiker", "Direktor", "Kassierer", "Kurator", "Kartenverkäufer"] },
 ]
+
+document.getElementById('locationCount').innerText = daten.length
 
 var status = document.getElementById('status')
 var home = document.getElementById('home')
