@@ -8,7 +8,7 @@
     "description": "Eine einfache Variation des Spiels Spyfall.",
     "icons": [
         {
-            "src": "placeholder192.png",
+            "src": "Logo192.png",
             "sizes": "192x192",
             "type": "image/png"
         }
