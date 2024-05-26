@@ -1,20 +1,17 @@
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js');
+importScripts(
+  'https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-sw.js'
+)
 
 if (workbox) {
-    console.log(`Yay! Workbox is loaded 🎉`);
+  console.log(`Yay! Workbox is loaded 🎉`)
 } else {
-    console.log(`Boo! Workbox didn't load 😬`);
+  console.log(`Boo! Workbox didn't load 😬`)
 }
 
-//workbox.setConfig({ debug: true })
+//workbox.setConfig({ debug: true });
 
 workbox.routing.registerRoute(
-    // Cache Everything.
-    () => true,
-    new workbox.strategies.StaleWhileRevalidate({
-        //        plugins: [
-        //            new workbox.broadcastUpdate.Plugin('precache-channel')
-        //        ]
-    })
-
-);
+  // Cache Everything.
+  ({ request }) => true,
+  new workbox.strategies.StaleWhileRevalidate({})
+)
